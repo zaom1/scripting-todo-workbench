@@ -1,0 +1,21 @@
+{
+  "name": "todo-workbench",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "tsc -p tsconfig.test.json && node .build/tests/parse.test.js && node .build/tests/types.test.js && node .build/tests/logic.test.js && node .build/tests/store.test.js",
+    "test:parse": "tsc -p tsconfig.test.json && node .build/tests/parse.test.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
