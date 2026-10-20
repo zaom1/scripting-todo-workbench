@@ -1,0 +1,29 @@
+{
+  "name": "待办工作台",
+  "entry": "index.tsx",
+  "version": "1.0.0",
+  "description": "A local-first todo workbench for heavy efficiency users: today queue, planned inbox, projects, nagging reminders, system Reminders bridge, widgets and Control Center actions.",
+  "localizedDescriptions": {
+    "zh": "本地为重的待办工作台：今日队列 / 计划收件箱 / 项目 / 催办通知 / 系统提醒事项双向同步 / 桌面小组件与控制中心。"
+  },
+  "localizedNames": {
+    "zh": "待办工作台"
+  },
+  "icon": "checklist",
+  "iconImage": null,
+  "color": "#0A84FF",
+  "author": {
+    "name": "zaom1",
+    "email": null,
+    "homepage": "https://github.com/zaom1"
+  },
+  "contributors": [],
+  "permissions": null,
+  "runInApp": false,
+  "intentInputTypes": [],
+  "remoteResource": {
+    "url": "https://github.com/zaom1/scripting-todo-workbench",
+    "hash": "",
+    "autoUpdateInterval": null
+  }
+}

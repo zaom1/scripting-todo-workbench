@@ -606,7 +606,18 @@ Logbook（按完成日分组、可反选恢复）；统计页用 `Charts`（✅ 
 
 ### 13.3 命名
 
-`index.tsx`（主 UI + 启动流程）、`widget.tsx`（小组件）、`app_intents.tsx`（6 个 AppIntent 注册，小组件按钮与控制中心共用）、`control_widget_button.tsx`（控制中心按钮，按 `ControlWidget.parameter` 切换撤销/完成下一条）、`spotlight.tsx`（Spotlight 落点跳板）、`notification.tsx`（自定义通知 UI，**本版未做**，用系统默认样式 + 动作按钮）、`types.ts`（模型 + 日期/重复纯函数）、`parse.ts`（NL 解析 + chips 预览）、`logic.ts`（**纯归约**：Action → DB + Effect[]，无 scripting 依赖）、`store.ts`（KV 抽象 + 撤销栈 + 规范化，无 scripting 依赖）、`reminders.ts`（系统提醒事项桥）、`runtime.ts`（Scripting 胶水层：Storage / App Group 切片 / 通知 / 触感 / 权限 / Spotlight）、`core.ts`（唯一写路径 `perform/undoLast/snapshot`）、`dev/scripting.d.ts` + `dev/jsx.d.ts`（桌面 `tsc` 自检用的类型垫片，**不参与真机运行**）、`tests/*.test.ts` + `tsconfig.test.json`（Node 单测 213 条）。
+`index.tsx`（主 UI + 启动流程）、`widget.tsx`（小组件）、`app_intents.tsx`（6 个 AppIntent 注册，小组件按钮与控制中心共用）、`control_widget_button.tsx`（控制中心按钮，按 `ControlWidget.parameter` 切换撤销/完成下一条）、`spotlight.tsx`（Spotlight 落点跳板）、`notification.tsx`（自定义通知 UI，**本版未做**，用系统默认样式 + 动作按钮）、`types.ts`（模型 + 日期/重复纯函数）、`parse.ts`（NL 解析 + chips 预览）、`logic.ts`（**纯归约**：Action → DB + Effect[]，无 scripting 依赖）、`store.ts`（KV 抽象 + 撤销栈 + 规范化，无 scripting 依赖）、`reminders.ts`（系统提醒事项桥）、`runtime.ts`（Scripting 胶水层：Storage / App Group 切片 / 通知 / 触感 / 权限 / Spotlight）、`core.ts`（唯一写路径 `perform/undoLast/snapshot`）、`dev/scripting.d.ts` + `dev/jsx.d.ts`（桌面 `tsc` 自检用的类型垫片，**不参与真机运行**）、`tests/*.test.ts` + `tsconfig.test.json`（Node 单测 213 条）、**`script.json`（v0.3.1 新增：脚本清单，声明 `name: "待办工作台"` / `entry: "index.tsx"` / 图标 / 版本 / `remoteResource.url`，是 Scripting 远程导入与「检查更新」读取的文件，真机必需）**。
+
+### 13.3.1 远程仓库导入规则（v0.3.1 核实）
+
+官方指南没有独立章节，规则来自三处一手证据：`Script` API 页的 `Script.metadata.remoteResource`（「URL of the remote resource (e.g., a `.zip` or Git repository）」）与 `Script.createImportScriptsURLScheme(urls)`（示例第一个参数就是 GitHub 仓库 URL）、官方库仓库 `schl3ck/scripting-app-lib` 的 `script.json`、社区 155 个带 `remoteResource` 的 `script.json`（见 [Keywos/rule](https://github.com/Keywos/rule)）。归纳：
+
+- 整个仓库 = 一个脚本 → 填仓库根 URL `https://github.com/<owner>/<repo>`；脚本在仓库子目录 → 填 tree URL `https://github.com/<owner>/<repo>/tree/<branch>/<path>`。
+- 纯文件分发 → 填 zip 直链（GitHub archive 直链 `.../archive/refs/heads/<branch>.zip` 亦可；官方 `ScriptUpdater` 明确会剥掉「zip 里唯一的顶层目录」，所以 GitHub 的包装目录不影响）。
+- 脚本名 / 图标 / 版本以目录里的 `script.json` 为准，不是仓库名 —— 这就是本工程必须带 `script.json` 的原因（通知按钮回跳依赖名字 `待办工作台`）。
+- 自动更新：`remoteResource.autoUpdateInterval`（秒），`null` = 只手动检查。数据存在 `Storage` 与 App Group 里，更新只换源码目录，不动数据。
+- 深链：`Script.createImportScriptsURLScheme([...])` → `scripting://import_scripts?urls=...`（数组的具体分隔写法文档未给，⚠️ 待真机确认）。
+- 文档与实盘有一处不一致：`Script (Python)` 页把清单写成 `metadata.json`，而 App 自己导出的脚本目录里是 `script.json`。以社区 155 例为准用 `script.json`。
 
 **v0.3 分层约定（原 `views/*.tsx` 拆分方案作废）**：`types / parse / logic / store` 四个模块**不得 import "scripting"**，因此能在 Node 里真跑单测；`runtime / reminders / core` 触碰真机 API，只能在 Xcode 侧验证；UI 入口文件保持薄（只有视图与事件绑定），所有写操作一律 `core.perform()`。这条边界是整个工程可测试的前提。
 
